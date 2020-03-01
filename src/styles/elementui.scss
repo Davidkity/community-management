@@ -1,0 +1,58 @@
+@import "./config.scss";
+// 定义全局导航栏点击的背景色， !important 将其权限设置为最高
+.el-submenu .el-menu-item.is-active { 
+    font-size: 14px;
+    padding-left: 60px !important;
+    &.is-active {background-color: $menuColor !important;}
+}
+// 修改一级菜单样式
+li.el-submenu {
+    &.is-active.is-opened .el-submenu__title {
+        background-color: $mainMenuColor !important;
+    }
+   
+}
+
+li.el-submenu {
+    &.is-active.is-opened  {
+        border-left: 4px solid #f56c6c;
+    }
+}
+
+
+// table 样式
+.el-table {
+    td, th {text-align: center;};
+    th { 
+        font-weight: bold;
+        color: #344a5f;
+    }
+    td {
+        font-size: 14px;
+    }
+    &.el-table--border th:first-child .cell {
+        padding-left: 5px;
+    }
+}
+
+//  dialog 样式
+.el-dialog__body {
+    padding: 30px 47px !important;
+}
+.el-dialog__footer {
+    text-align: center !important;
+    padding-bottom: 50px !important;
+    .el-button {
+        width: 150px !important;
+        margin: 0, 11px !important;
+    }
+}
+
+// form 样式
+.el-form {
+    .el-form-item:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+
+

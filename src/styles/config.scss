@@ -1,0 +1,33 @@
+// 后台框架尺寸
+// 菜单的宽度
+$navMenuWidth: 250px;
+$navMenuMinWidth: 64px;
+$layoutHeader: 75px;
+// 一级菜单颜色
+$mainMenuColor: #f56c6c;
+// 二级菜单颜色
+$menuColor: rgba(245, 108, 108, .2);
+//图标被选中时高亮颜色
+$iconColor: #ffffff;
+
+
+// css 过渡样式
+@mixin webkit($type, $value){
+    -webkit-#{$type}: $value;
+    -moz-#{$type}: $value;
+    -o-#{$type}: $value;
+    -ms-#{$type}: $value;
+    #{$type}: $value;
+  }
+  
+  @mixin labelDom($align, $width, $line-height: "normal"){
+    label {
+      float: left;
+      width: $width + px;
+      text-align: $align;
+      line-height: $line-height + px;
+    }
+    .warp-content {
+        margin-left: $width + px;
+    }
+  }
