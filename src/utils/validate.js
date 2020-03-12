@@ -44,5 +44,12 @@ export function validateCodeValue(value){
     return reg.test(value) ? true : false;
 }
 
+/**
+ * 纯数字验证
+ */
+export function validateMath(value){
+    let reg = /[1-9]\d*/;
+    return reg.test(value) ? true : false;
+}
 
 

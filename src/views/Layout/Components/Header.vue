@@ -52,6 +52,7 @@ export default {
 @import "../../../styles/config.scss";
 #header-warp {
     position: fixed;
+    z-index: 888;
     top: 0;
     right: 0;
     left: $navMenuWidth;

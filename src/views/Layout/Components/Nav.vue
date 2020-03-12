@@ -20,12 +20,15 @@
                     <span slot="title">  {{ item.meta.name }}</span>
                 </template>
                 <!-- 子级菜单 -->
-                <el-menu-item v-for="subItem in item.children" :key="subItem.id" :index="subItem.path">
-                    <template>
-                        <svg-icon :iconClass="subItem.meta.icon" :className="subItem.meta.icon"/>
-                        <span>{{ subItem.meta.name }}</span>
-                    </template>
-                </el-menu-item>
+                <template v-for="subItem in item.children">
+                    <el-menu-item v-if="!subItem.hidden"  :key="subItem.id" :index="subItem.path">
+                        <template >
+                            <svg-icon :iconClass="subItem.meta.icon" :className="subItem.meta.icon"/>
+                            <span>{{ subItem.meta.name }}</span>
+                        </template>
+                    </el-menu-item>
+                </template >
+                
             </el-submenu>
             </template>
         </el-menu>
@@ -74,6 +77,7 @@ export default {
 }
 #nav-wrap{
     position: fixed;
+    z-index: 9999;
     top: 0;
     left: 0;
     width: $navMenuWidth;

@@ -78,7 +78,7 @@ const routes = [
         },
         component: () => import("../views/Jewel/build.vue")
       },
-      // 楼栋管理页面
+      // 单元管理页面
       {
         path: "/unit",
         name: "Unit",
@@ -88,7 +88,7 @@ const routes = [
         },
         component: () => import("../views/Jewel/unit.vue")
       },
-      // 楼栋管理页面
+      // 房屋管理页面
       {
         path: "/house",
         name: "House",
@@ -97,6 +97,19 @@ const routes = [
           icon: "house"
         },
         component: () => import("../views/Jewel/house.vue")
+      },
+      /**
+       * 添加房屋 AddHouse
+       */
+      {
+        path: "/addHouse",
+        name: "AddHouse",
+        hidden: true,
+        meta: {
+          name: "添加房屋",
+          icon: "house"
+        },
+        component: () => import("../views/Jewel/components/addHouse.vue")
       }
     ]
   },

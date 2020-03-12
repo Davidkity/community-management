@@ -13,7 +13,8 @@ export function global(){
             center: true
         }).then(() => {
             // 调用函数(方法)，函数里面有接口
-            params.fn && params.fn(params.id)    //当params.fn 为true的时候，才会执行函数 params.fn() 
+            str.value = params.id || "";
+            params.fn && params.fn(params.id || "");    //当params.fn 为true的时候，才会执行函数 params.fn() 
             // if(params.fn){
             //     params.fn();
             // }
@@ -22,10 +23,11 @@ export function global(){
             //     message: '删除成功!'
             // });
         }).catch(() => {
-            root.$message({
-                type: 'info',
-                message: '已取消删除'
-            });
+            params.catchFn && params.catchFn();
+            // root.$message({
+            //     type: 'info',
+            //     message: '已取消删除'
+            // });
         });
     }
 
