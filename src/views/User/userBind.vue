@@ -1,7 +1,8 @@
 <template>
     <div>
+        <SelectVue :config="data.configOption" :selectVal.sync="data.selectVal1"></SelectVue>
         <!-- 表格数据 -->
-        <TableVue :config="data.configTable">
+        <TableVue :config="data.configTable" >
             <template v-slot:status="slotData">
                 <!-- v-slot:status="slotData": status 是数据插槽中的定义的字段的值
                     slotData.data.name: 
@@ -22,12 +23,19 @@
 <script>
 import { reactive } from '@vue/composition-api';
 import TableVue from "@/components/Table";  
+import SelectVue from "@/components/Select"; 
 export default {
     name: "userBind",
-    components: { TableVue },
+    components: { TableVue, SelectVue },
     setup(props, { root }) {
 
         const data = reactive({
+            selectVal1: "",
+            configOption: {
+                clearFlag: true,
+                init: ["name", "phone"]
+            },
+
             configTable: {
                 // 多选框
                 // selection: true,
@@ -58,7 +66,8 @@ export default {
             方法
          */
         const operation = (params) => {
-            console.log(params) 
+            console.log(params) ;
+            console.log(data.selectVal1);
         }
         
         return {
