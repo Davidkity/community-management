@@ -1,5 +1,6 @@
 <template>
     <div class="house">
+        <!--条件查询-->
         <div class="house-content-top" :style="data.house_top_height">
             <div class="search-title">
                 <el-row :gutter="20">
@@ -8,205 +9,234 @@
                 </el-row>
             </div>
             <div class="search-content">
-                <el-row :gutter="14">
-                    
+                <el-row :gutter="14" >
                     <el-col :span="7">
                         <el-input
-                            placeholder="请选择楼栋"
-                            v-model="data.search_code"
+                            placeholder="请输入业主名"
+                            v-model="data.selectOptions.search_name"
                             clearable>
-                            <el-button type="primary" slot="append" @click="searchBuild"  icon="el-icon-search" >选择</el-button>
-                        </el-input>
-                        
-                    </el-col> 
-                    <el-col :span="1" class="empty">.</el-col>
-                    <el-col :span="5">
-                        <el-input
-                            placeholder="请输入单元编号"
-                            v-model="data.search_num"
-                            clearable style="width: 100%;">
                         </el-input>
                     </el-col>
                     <el-col :span="1" class="empty">.</el-col>
                     <el-col :span="5">
                         <el-input
-                            placeholder="请输入总层数"
-                            v-model="data.search_name"
+                            placeholder="请输入业主身份证"
+                            v-model="data.selectOptions.search_idCard"
                             clearable>
                         </el-input>
                     </el-col>
-
+                    <el-col :span="1" class="empty">.</el-col>
+                    <el-col :span="5">
+                        <el-input
+                            placeholder="请输入联系方式"
+                            v-model="data.selectOptions.search_phone"
+                            clearable>
+                        </el-input>
+                    </el-col>
                     <el-col :span="5"  >
                         <el-button type="primary" class="searchButton" @click="search" icon="el-icon-search">
                             查询
                         </el-button>
                     </el-col>
                 </el-row>
+                <el-row  :gutter="14" class="el_col_hidden" :hidden="data.conditionIsHidden">
+                    <el-col :span="7">
+                        <el-select v-model="data.selectOptions.search_buildValue" clearable @change="buildChange" placeholder="请选择楼栋">
+                            <el-option
+                            v-for="item in data.buildOptions"
+                            :key="item.buildId"
+                            :label="item.name"
+                            :value="item.buildId">
+                            </el-option>
+                        </el-select>
+                    </el-col> 
+                    <el-col :span="1" class="empty">.</el-col>
+                    <el-col :span="5">
+                        <el-select v-model="data.selectOptions.search_unitValue" clearable @change="unitChange"  placeholder="请选择单元">
+                            <el-option
+                            v-for="item in data.unitOptions"
+                            :key="item.unitId"
+                            :label="item.num" 
+                            :value="item.unitId">
+                            </el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :span="1" class="empty">.</el-col>
+                    <el-col :span="5">
+                        <el-select v-model="data.selectOptions.search_houseValue" clearable placeholder="请选择房屋">
+                            <el-option
+                            v-for="item in data.houseOptions"
+                            :key="item.houseId"
+                            :label="item.num"
+                            :value="item.houseId">
+                            </el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :span="5" class="empty">.</el-col>
+                    
+                </el-row>
 
                 <el-row :gutter="14" class="el_col_hidden" :hidden="data.conditionIsHidden">
-                    <el-select v-model="data.elevator_value" clearable placeholder="请选择是否有电梯">
-                        <el-option
-                        v-for="item in data.elevator_options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                        </el-option>
-                    </el-select>
+                    <el-col :span="5">
+                        <el-input
+                            placeholder="请输入业主编号"
+                            v-model="data.selectOptions.search_code"
+                            clearable>
+                        </el-input>
+                    </el-col>
                 </el-row>
             </div>
         </div>
         <!-- 表格显示数据 -->
-      <div class="house-content">
+        <div class="house-content">
 
             <div class="house-title">
                 <el-row :gutter="20">
-                    <el-col :span="22">单元信息</el-col>
-                    <el-button class="moreButton" type="primary" @click="dialog_info = true" size="small" icon="el-icon-circle-plus-outline">添加单元</el-button>
+                    <el-col :span="22">业主信息</el-col>
+                    <el-button class="moreButton" type="primary" @click="addUser" size="small" icon="el-icon-circle-plus-outline">添加业主</el-button>
                 </el-row>
             </div>
-            <div class="house-info">
-                <el-table :data="data.tableData.item" border @selection-change="handleSelectionChange" style="width: 100%"
-                v-loading="data.loading"
-                element-loading-text="拼命加载中"
-                element-loading-spinner="el-icon-loading">
-                    <el-table-column type="selection" width="55"></el-table-column>
-                    <el-table-column prop="code" label="楼房编码" width="300"></el-table-column>
-                    <el-table-column prop="num" label="编号" width="250"></el-table-column>
-                    <el-table-column prop="name" label="楼房名称" width="200"></el-table-column>
-                    <el-table-column prop="createBy" label="创建人员" width="270"></el-table-column>
-                    <el-table-column label="操作">
-                        <template slot-scope="scope">
-                            <el-button size="mini" type="danger" @click="deleteItem(scope.row.houseId)">删除</el-button>
-                            <el-button size="mini" type="success" @click="dialogInfo(scope.row.houseId)">编辑</el-button>
-                            <el-button size="mini" type="success" @click="houseInfo(scope.row.houseId)" >添加单元</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <div class="black-space-30"></div>
-                <!-- 底部分页 -->
-                <el-row>
-                    <el-col :span="12">
-                        <el-button size="medium" type="danger" @click="deleteAll">批量删除</el-button>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-pagination 
-                            class="pull-right"
-                            @size-change="handleSizeChange"
-                            @current-change="handleCurrentChange"
-                            background 
-                            :page-sizes="[10, 20, 30, 40]"
-                            layout="total, sizes, prev, pager, next, jumper" 
-                            :total="data.totals">
-                        </el-pagination>
-                    </el-col>
-                </el-row>
-                <!-- 新增弹窗 -->
-               <!-- <DialogInfo :flag.sync="dialog_info" :id.sync="infoId" :buttonType.sync="buttonType" :dialogName.sync="dialog_name" @getChangeData="getList" /> -->
-               <!-- <DialogInfo :flag.sync="dialog_info" :category="options.category" /> -->
-            </div>
+
+            <!-- 表格数据 -->
+            <TableVue ref="userTable" :config="data.configTable" :tableRow.sync="data.tableRow" >
+                <template v-slot:sexName="slotData">
+                    <!-- v-slot:status="slotData": status 是数据插槽中的定义的字段的值
+                        slotData.data.name: 
+                            slotData 是本地的 status 对应的值, 
+                            data 是 TabelVue 组件中的 双向绑定的 data 的对象,
+                            name 是 TabelVue 组件中的 双向绑定的 data 的对象对应的值
+                    -->
+                    
+                    <el-input v-model="slotData.data.sex" v-text="slotData.data.sex == 'W' ? '女' : '男'"></el-input>
+                    
+                </template>
+                <!-- 插槽-方法 -->
+                <template v-slot:operation="slotData">
+                    <el-button size="mini" plain>
+                        <el-dropdown @command="handleCommand" >
+                            <span class="el-dropdown-link">
+                                变更<i class="el-icon-arrow-down el-icon--right"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown" >
+                                <el-dropdown-item v-for="item in data.dropDown" :key="item.id" :command="beforeHandleCommand(slotData.data,item.code)"  v-text="item.value"></el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </el-button>
+                    <el-button size="small"  @click="editUser(slotData.data)">详情</el-button>
+                </template>
+                <template v-slot:tableFooterLeft >
+                    <el-button size="small"  @click="handlerBatchDel()">批量删除</el-button>
+                </template>
+            </TableVue>
+            <!-- 新增弹窗 -->
+            <AddUserDialog :userFlag.sync="data.userInfoDialog" :buttonType.sync="data.buttonType" :dialogName.sync="data.dialogName" :userId.sync="data.userId" :isOwner.sync="data.isOwner" @getChangeData="getList"></AddUserDialog>
+            <!-- 房屋解绑弹窗 -->
+            <CheckOutDialog :checkOutFlag.sync="data.checkOutFlag" :userId.sync="data.userId"></CheckOutDialog>
         </div>
-   </div>
+
+    </div>
+
     
 </template>
 
 <script>
-import { GetList, Delete } from "@/api/adminApi/home";
-// import DialogInfo from "./dialog/addhouse";
+
 import { global } from "@/utils/global_V3.0.js";
-import { ref, reactive, onMounted } from '@vue/composition-api'
+import { ref, reactive, onMounted } from '@vue/composition-api';
+import { UserDelete } from "@/api/adminApi/user";
+import { GetList, GetUnitList, GetHouseList } from "@/api/adminApi/home";
+
+//组件
+import TableVue from "@/components/Table";  
+import AddUserDialog from "./dialog/addUser";
+import CheckOutDialog from "./dialog/checkOut";
+
 export default {
-    // components: {
-    //     DialogInfo
-    // },
-    setup(props, { root }) {
-        console.log(root.$route.params.buildId);
+    name: "userInfo",
+    components: { TableVue, AddUserDialog, CheckOutDialog },
+
+    setup(props, { root, refs }) {
+
+        const { confirm } = global();
+
         const data = reactive({
+            //业主的标识
+            isOwner: "",
+
+            // 查询条件中的
             house_top_height: "height:132px",
             moreConditionSelect: "更多",
             conditionIsHidden: "true",
-            search_id: "",
-            search_code: "",
-            search_name: "",
-            search_num: "",
-            elevator_options: [
-                {
-                    value: 'N',
-                    label: '无'
-                },
-                {
-                    value: 'Y',
-                    label: '有'
-                }
-            ],
-            elevator_value: "",
-            totals: 0,
-            dialog_info: false,
-
-            deleteInfoId: "",
-            infoId: "",
-            buttonType: "",
-            dialog_name: "添加楼栋",
-            tableData: {
-                item: []
+            selectOptions: {
+                search_name: "",
+                search_idCard: "",
+                search_phone: "",
+                search_code: "",
+                search_buildValue: "",
+                search_unitValue: "",
+                search_houseValue: ""
             },
-            page: {
-                pageNumber: 1,
-                pageSize: 10
+            buildOptions: [],
+            unitOptions: [],
+            houseOptions: [],
+
+            // 表格
+            userInfoDialog: false,
+            buttonType: "",
+            dialogName: "",
+            userId: 0,
+
+            //房屋解绑
+            checkOutFlag: false,
+
+            dropDown: [
+                {id: 1, code:"update", value: "修改业主"},
+                {id: 2, code:"delete", value: "删除业主"},
+                {id: 3, code:"checkIn", value: "入住房屋"},
+                {id: 4, code:"unbind", value: "房屋解绑"},
+                {id: 5, code:"propertyFee", value: "物业费用"},
+            ],
+
+
+            tableRow: {},
+
+            configTable: {
+                // 勾选
+                selection: true,
+                // 表头
+                tHead: [
+                    { label: "业主编号",  field: "code", width: 200 },
+                    { label: "名称",  field: "name", width: 100 },
+                    { label: "性别", field: "sex", width: 80, columnType: "slot", slotName: "sexName" },
+                    { label: "年龄", field: "age", width: 80 },
+                    { label: "身份证", field: "idCard" },
+                    { label: "联系方式", field: "phone" },
+                    { label: "创建人", field: "createBy", width: 100 },
+                    { label: "操作", columnType: "slot",  slotName: "operation" }
+                ],
+                requestData: {
+                    url: "getUserList",
+                    data: {
+                        mark: "MQ",
+                        userMark: "US",
+                        current: 1,
+                        size: 10
+                    }
+                }
             }
-        });
-        // 相当于给方法换了一个名称
-        const { confirm } = global()
-        /**
-            声明变量
-         */
+        })
 
-        // const search_num = ref("");
-        // const search_code = ref("");
-        // const search_name = ref("");
-        // const totals = ref(0);
-        // const loading = ref(false);
-        // const deleteInfoId = ref("");
-        // const infoId = ref("");
-        // const buttonType = ref("");
-        // //  弹窗
-        // const dialog_info = ref(false);
-        // const dialog_name = ref("添加楼栋");
-
-
-        // const tableData = reactive({
-        //     item: []
-        // });
-        // //页码
-        // const page = reactive({
-        //     pageNumber: 1,
-        //     pageSize: 10
-        // })
-
-
-        /** 
-            声明方法
-         */
-
-        const dialogInfo = (id) =>{
-            data.infoId = id;
-            data.buttonType = "editButton";
-            data.dialog_name = "修改楼栋";
-            data.dialog_info = true;
-        }
-        /*******************************************************************
+        /*****************************************************************************
             方法
          */
-        /**
-            选择楼栋
-         */
-        const searchBuild = () => {
-            console.log("选择楼栋")
-        }
+        
+
+        /************************************查询条件*********************************************************** */
         //是否隐藏更多查询条件
         const changeSelect = () => {
             if(data.moreConditionSelect == "更多"){
                 data.conditionIsHidden = false;
-                data.house_top_height = "height: 186px";
+                data.house_top_height = "height: 256px";
                 data.moreConditionSelect = "隐藏";
             }else{
                 data.conditionIsHidden = true;
@@ -214,149 +244,232 @@ export default {
                 data.moreConditionSelect = "更多";
             }
         }
+        /**
+            选择楼栋
+         */
+        
+        
+        //根据情况清空查询条件里面的 buildId
+        const cleanBuildId = () => {
+            if(data.selectOptions.search_buildName == ""){
+                data.selectOptions.search_buildId = "";
+            }
+        }
+
+        
+
+
+
+
+        // 查询
+        // search_name: "",
+        //         search_idCard: "",
+        //         search_phone: "",
+        //         search_idCard: "",
+        //         search_buildValue: "",
+        //         search_unitValue: "",
+        //         search_houseValue: ""
         const search = () => {
             let requestData = {
-                mark:"MQ",
-                code: data.search_code,
-                name: data.search_name,
-                num: data.search_num,
-                current: data.page.pageNumber,
-                size: data.page.pageSize
-            }
-             // 加载状态
-            data.loading = true;
-            GetList(requestData).then(response => {
-                let data = response.data.data;
-                // 更新数据
-                data.tableData.item = data.data;
-                // 更新页码总数
+                url: "getUserList",
+                data:{
+                    mark: "MQ",
+                    userMark: "US",
+                    current: 1,
+                    size: 10,
+                    name: data.selectOptions.search_name,
+                    idCard: data.selectOptions.search_idCard,
+                    code: data.selectOptions.search_code,
+                    phone: data.selectOptions.search_phone,
+                    buildId: data.selectOptions.search_buildValue,
+                    unitId: data.selectOptions.search_unitValue,
+                    houseId: data.selectOptions.search_houseValue
+                }
                 
-                data.totals = data.total;
-                data.loading = false;
-            }).catch(error => {
-                data.loading = false;
-            })
-        }
-        /**
-            表格数据颜色的变化
-         */
-        const tableRowClassName = (row, rowIndex) => {
-            return rowIndex === 1 ? 'warning-row' : 'success-row';
-        }
-        // 表格
-        const handleSelectionChange = (val) =>{
-            
-            // 映射出数据（筛选出id）
-            let houseId = val.map(item => item.houseId)
-            data.deleteInfoId = houseId;
-            console.log("houseId: " + houseId);
-        }
-        //每页的条数
-        const handleSizeChange = (val) =>{
-            data.page.pageSize = val;
-            getList();
-        }
-        //当前是第几页
-        const handleCurrentChange = (val) =>{
-            data.page.pageNumber = val;
-            getList();
-        }
-        
-        /**
-            查询数据
-         */
-        const getList = (() => {
-            let requestData = {
-                mark:"MQ",
-                houseId: "",
-                code: "",
-                name: "",
-                num: "",
-                current: data.page.pageNumber,
-                size: data.page.pageSize
             }
-            // 加载状态
-            data.loading = true;
-            GetList(requestData).then(response => {
-                let data = response.data.data;
-                // 更新数据
-                data.tableData.item = data.data;
-                // 更新页码总数
-                
-                data.totals = data.total;
-                data.loading = false;
-            }).catch(error => {
-                data.loading = false;
-            })
-        });
-        
-        /** 
-            删除全部
-         */
-        const deleteAll = () => {
+            getList(requestData);
+            console.log("楼栋id: " + data.selectOptions.search_buildValue)
+        }
+        /**********************************表格************************************************************** */
+        // 添加业主
+        const addUser = () =>{
+            data.userInfoDialog = true;
+            data.isOwner = "Y";
+            data.dialogName = "添加业主";
+            data.buttonType = "addUser";
+        }
 
-            if(!data.deleteInfoId || data.deleteInfoId.length == 0){
+        //编辑业主
+        const editUser = (row) => {
+            data.userId = row.userId;
+            data.userInfoDialog = true;
+            data.dialogName = "编辑业主";
+            data.buttonType = "eidtUser";
+        }
+
+        //入住房屋
+        const checkIn = (row) => {
+            data.userId = row.userId;
+            // 路由跳转
+            console.log("data.userId: " + data.userId)
+            root.$router.push({
+                path: `/UserCheckIn/${data.userId}`  // es6的写法
+                // params: {
+                //     userId: data.userId
+                // }
+            });
+        }
+
+        // 房屋解绑
+        const checkOut = (row) => {
+            data.userId = row.userId;
+            data.checkOutFlag = true;
+            console.log(data.userId);
+            console.log(data.checkOutFlag);
+        }
+
+        //下拉框点击事件
+        const handleCommand = (command) => {
+            switch (command.command) {
+                case "update":
+                    console.log("修改")
+                    editUser(command.row);
+                　　break;
+                case "delete":
+                    handlerDel(command.row);
+                　　break;
+                case "checkIn":
+                    console.log("入住")
+                    checkIn(command.row);
+                    break;
+                case "unbind":
+                    console.log("解绑")
+                    checkOut(command.row);
+                    break;
+                case "propertyFee":
+                    console.log("费用")
+                    break;
+            }
+        }
+        const beforeHandleCommand = (row,command) => {
+            return {
+                'row': row,
+                'command': command
+            }
+        }
+        
+        //刷新数据
+        const getList = (params) => {
+            refs.userTable.refreshData(params);
+        }
+        // 批量删除
+        const handlerBatchDel = () => {
+            let id = data.tableRow.idItem;
+            if(!id || id.length == 0){
                 root.$message({
-                    message: "请选择要删除的数据！！",
-                    type: "warning"
+                    message: "请选择需要删除的用户",
+                    type: "error"
                 })
+                return false;
             }
             confirm({
                 context: "确认删除当前所选全部信息，确认后将无法恢复！！",
                 type: "warning",
-                fn: confirmDelete
+                fn: userDelete
             })
         }
-        // 删除
-        const deleteItem = (id) => {
-            data.deleteInfoId = [id];
+        // 单个删除
+        const handlerDel = (params) => {
+            data.tableRow.idItem = [params.userId];
             confirm({
-                context: "确认删除当前信息，确认后将无法恢复！！",
-                tip: "警告",
+                context: "确认删除当前所选信息，确认后将无法恢复！！",
                 type: "warning",
-                fn: confirmDelete
-            });
+                fn: userDelete
+            })
         }
-        // 确认删除
-        const confirmDelete = (value) => {
-            console.log("确认： " + data.deleteInfoId);
-            let requestData = JSON.stringify(data.deleteInfoId)
-            Delete(requestData).then(response => {
-                data.deleteInfoId = "";
-                getList();
+        // 删除数据
+        const userDelete= () => {
+            let requestData = JSON.stringify(data.tableRow.idItem);
+            UserDelete(requestData).then(response => {
+                let responseData = response.data;
+                refs.userTable.refreshData();
+                root.$message({
+                    message:  responseData.message,
+                    type: "success"  
+                })
             }).catch(error => {
 
-            });
-            console.log(value)
+            })
+
         }
-        //跳转到单元信息页面
-        const houseInfo = (id) => {
-            // 路由跳转
-            root.$router.push({
-                name: "house",
-                params: {
-                    houseId: id
-                }
-                
-            });
+
+        
+
+        // 加载 楼栋，单元，房屋 数据
+        const loadBuild = () => {
+            let requestData = {
+                mark: "MQ",
+                current: 1,
+                size: 1000000
+            }
+            GetList(requestData).then(response => {
+                let responseData = response.data.data.data;
+                data.buildOptions = responseData;
+            }).catch(error => {
+
+            })
         }
-        /**
-            生命周期
-         */
+
+        const buildChange = () => {
+            loadUnit();
+            loadHouse();
+        }
+        const loadUnit = () => {
+            let requestData = {
+                mark: "MQ",
+                unitMark: "UN",
+                buildId: data.selectOptions.search_buildValue,
+                current: 1,
+                size: 1000000
+            }
+            GetUnitList(requestData).then(response => {
+                let responseData = response.data.data.data;
+                data.unitOptions = responseData;
+            }).catch(error => {
+
+            })
+        }
+        const unitChange = () => {
+            loadHouse();
+        }
+        const loadHouse = () => {
+            let requestData = {
+                mark: "MQ",
+                houseMark: "HO",
+                buildId: data.selectOptions.search_buildValue,
+                unitId: data.selectOptions.search_unitValue,
+                current: 1,
+                size: 1000000
+            }
+            GetHouseList(requestData).then(response => {
+                let responseData = response.data.data.records;
+                data.houseOptions = responseData;
+            }).catch(error => {
+
+            })
+        }
         onMounted(() => {
-            //获取列表
-            getList();
+            loadBuild(),
+            loadUnit(),
+            loadHouse()
         })
         return {
             data,
-            // ref
-            // search_num, search_code, search_name, dialog_info, totals, loading, infoId, buttonType, dialog_name,
-            // //reactive
-            // tableData,
-            // 方法、函数
-            changeSelect, search, tableRowClassName,handleSizeChange,handleCurrentChange, handleSelectionChange, 
-            deleteAll, deleteItem, confirmDelete, getList, dialogInfo, houseInfo, searchBuild
-
+            // 查询条件
+            changeSelect, search, cleanBuildId, loadBuild, buildChange, loadUnit, unitChange, loadHouse,
+            // 表格
+            addUser, getList, handlerBatchDel, handlerDel, editUser, checkIn, handleCommand, beforeHandleCommand,
+            checkOut
         }
     }
 }
@@ -403,7 +516,6 @@ export default {
         }
 
         .el_col_hidden {
-            padding-left: 8px;
             padding-top: 18px;
         }
     }

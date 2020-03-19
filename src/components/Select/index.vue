@@ -4,7 +4,7 @@
     </el-select>
 </template>
 <script>
-import { reactive, onMounted } from '@vue/composition-api';
+import { reactive, onMounted, watch } from '@vue/composition-api';
 export default {
     name: "",
     props: {
@@ -24,12 +24,25 @@ export default {
                 { value: "email", label: "邮箱" },
                 { value: "id", label: "ID" },
                 { value: "title", label: "标题" },
+                { value: "W", label: "女" },
+                { value: "M", label: "男" },
+                { value: "MEMBER", label: "家庭成员" },
+                { value: "TENANT", label: "租客" },
+                { value: "OTHER", label: "其他" }
             ]
         });
+
+
+        watch(() => props.config.selectValue, (selectValue)  => {
+            data.selectValue = props.config.selectValue;
+        }); 
+
+
+
         /**
          * 初始化下拉选择
          */
-        let initOption = () => {
+        const initOption = () => {
             let initData = props.config.init;
             // 是否可清除的标记
             data.clearableFlag = props.config.clearFlag
@@ -66,7 +79,6 @@ export default {
         }
 
         const select = () => {
-            console.log("data.selectValue: " + data.selectValue)
             emit("update:selectVal", data.selectValue)
         }
         /**
@@ -78,7 +90,7 @@ export default {
         
         return {
             data,
-            select
+            select, initOption
         }
     }
 }

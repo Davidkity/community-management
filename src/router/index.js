@@ -155,6 +155,17 @@ const routes = [
           icon: "bind"
         },
         component: () => import("../views/User/userBind.vue")
+      },
+      // 业主入住房屋管理页面
+      {
+        path: "/userCheckIn/:userId",
+        name: "UserCheckIn",
+        hidden: true,
+        meta: {
+          name: "业主入住房屋",
+          icon: "bind"
+        },
+        component: () => import("../views/User/components/checkInHouse.vue")
       }
     ]
   },

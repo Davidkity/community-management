@@ -16,12 +16,16 @@ export function loadData(){
             data: requestJson.data
         }
         loadTableData(requestData).then(response => {
-            let responseData = response.data.data.data;
+            let responseData = response.data.data;   //注意返回的数据的层数
+            // 后台没有数据的时候就返回一个空的数组出来，不管怎样都是返回一个数组出来
+            tableData.item = responseData.records;
+            tableData.total = responseData.records.length === 0 ? 0 : response.data.data.total
             // 返回的数据存在
-            if(responseData && responseData.length > 0) {
-                tableData.item = responseData;
-                tableData.total = response.data.data.total
-            }
+            // if(responseData && responseData.records.length > 0) {
+            //     console.log("赋值")
+            //     tableData.item = responseData.records;
+            //     tableData.total = response.data.data.total
+            // }
         }).catch(error => {})
     }
 

@@ -7,13 +7,14 @@
             :data="data.tableData" 
             style="width: 100%" 
             :row-class-name="tableRowClassName"
+            @selection-change="thatSelectCheckBox"
         >
             <!-- 多选框 -->
             <el-table-column v-if="data.tableConfig.selection" type="selection" width="55"></el-table-column>
 
             <template v-for="item in data.tableConfig.tHead">
                 <!--v-slot-->
-                <el-table-column
+                <el-table-column 
                 :key="item.field"
                 :prop="item.field"
                 :label="item.label"
@@ -36,18 +37,28 @@
                 </el-table-column>
             </template>
         </el-table>
-        <!-- 页码 -->
-        <el-pagination class="pagination"
-            v-if="data.tableConfig.paginationShow"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageData.currentPage"
-            :page-sizes="pageData.pageSizes"
-            :page-size="pageData.pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="pageData.total"
-            background
-        ></el-pagination>
+        <div class="table-footer">
+            <el-row>
+                <el-col :span="4">
+                    &nbsp;
+                    <slot name="tableFooterLeft" ></slot>
+                </el-col>
+                <el-col :span="20">
+                    <el-pagination class="pull-right"
+                        v-if="data.tableConfig.paginationShow"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="pageData.currentPage"
+                        :page-sizes="pageData.pageSizes"
+                        :page-size="pageData.pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="pageData.total"
+                        background
+                    ></el-pagination>
+                </el-col> 
+            </el-row>
+        </div>
+        
     </div>
 </template>
 <script>
@@ -61,10 +72,14 @@ export default {
         config: {
             type: Object,
             default: () => {}
+        },
+        tableRow: {
+            type: Object,
+            default: () => {}
         }
     },
 
-    setup(props, { root }) {
+    setup(props, { root, emit }) {
 
         // 加载数据
         const { tableData, tableLoadData } = loadData({ root });
@@ -96,6 +111,13 @@ export default {
             data.tableData = tableData;
             totalCount(total);
         });
+        // 监听参数
+        // watch(() => data.tableConfig.requestData, (requestData) => {
+        //     console.log(data.tableConfig.requestData)
+        //     console.log("进入TAble中的监听")
+        //     console.log(requestData);
+        //     data.tableConfig.requestData = requestData;
+        // })
         // 页码监听
         watch([
             () => pageData.currentPage,
@@ -136,6 +158,24 @@ export default {
             return '';
         }
 
+        // 勾选时触发
+        const thatSelectCheckBox = (val) => {
+            let rowData = {
+                idItem: val.map(item => item.userId)
+            }
+            emit("update:tableRow", rowData);
+        }
+        // 刷新数据(供外部调用)
+        const refreshData = (params) => {
+            console.log("刷新数据的参数");
+            if(params == null){
+                console.log(params == null);
+            }else{
+                console.log(params);
+            }
+            
+            params == null ? tableLoadData(data.tableConfig.requestData) : tableLoadData(params);
+        }
         onBeforeMount(() => {
             initTableConfig();
             tableLoadData(data.tableConfig.requestData);
@@ -143,7 +183,7 @@ export default {
 
         return {
             data, pageData,
-            tableRowClassName, handleSizeChange, handleCurrentChange
+            tableRowClassName, handleSizeChange, handleCurrentChange, thatSelectCheckBox, refreshData
         }
     }
 
@@ -151,10 +191,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.pagination {
-    margin: 20px, 20px, 20px 0;
-    padding: 20px;
-    float: right;
+.table-footer {
+    padding: 15px 0;
 }
 </style>
 
