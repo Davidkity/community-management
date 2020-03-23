@@ -21,6 +21,8 @@
 <script>
 import { AddBuild, GetList, EditBuild } from "@/api/adminApi/home";
 import { reactive, ref, watch, computed } from "@vue/composition-api";
+import { setCommunity, getCommunity  } from "@/utils/app";
+
 export default {
     name: "addBuild",
     props: {
@@ -48,6 +50,8 @@ export default {
          数据
          */
          const data = reactive({
+
+            marks: getCommunity(),
             dialog_name: "添加楼栋",
             dialog_info_flag: false,
             formLabelWidth: "100px",
@@ -102,7 +106,7 @@ export default {
         //根据id 获取数据
         const getInfo = () => {
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 current: 1,
                 size: 2,
                 buildId: props.id,
@@ -176,7 +180,7 @@ export default {
         })
         const addInfo = () =>{
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 createdBy: data.username,
                 num: data.form.build_num,
                 name: data.form.build_name,
@@ -185,8 +189,6 @@ export default {
             //调用添加数据的接口
             AddBuild(requestData).then(response => {
                 let responseData = response.data
-                console.log("数据");
-                console.log(responseData);
                 root.$message({
                     message: responseData.message,
                     type: 'success'
@@ -205,6 +207,7 @@ export default {
 
                 // 刷新数据
                 emit("getChangeData");
+                close()
             }).catch(error => {
                 data.submitLoading = false
             })
@@ -212,7 +215,7 @@ export default {
 
         const editInfo = () =>{
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 updateBy: data.username,
                 buildId: props.id,
                 num: data.form.build_num,
@@ -229,7 +232,7 @@ export default {
                 data.submitLoading = false
                 // 刷新数据
                 emit("getChangeData")
-                
+                close();
             }).catch(error => {
                 data.submitLoading = false
             })

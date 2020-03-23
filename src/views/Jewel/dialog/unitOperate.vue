@@ -64,6 +64,7 @@
 import { GetUnitList, EditUnit, GetBuildList, AddUnit } from "@/api/adminApi/home";
 import { reactive, ref, watch, computed } from "@vue/composition-api";
 import { dateFormat } from "../../../utils/common";
+import { setCommunity, getCommunity  } from "@/utils/app";
 //验证规则
 import { validateMath } from '@/utils/validate';
 export default {
@@ -92,6 +93,7 @@ export default {
          数据
          */
          const data = reactive({
+            marks: getCommunity(),
             disabledFlag: false,
             disabledBuildFlag: false,
             hiddenFlag: false,
@@ -196,7 +198,7 @@ export default {
         //获取楼栋信息
         const getBuildInfo = () => {
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 buildId: ""
             }
             GetBuildList(requestData).then(response => {
@@ -210,7 +212,7 @@ export default {
         const getInfo = () => {
             console.log(props.id);
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 unitMark: "UN",
                 current: 1,
                 size: 2,
@@ -292,7 +294,7 @@ export default {
         })
         const addInfo = () =>{
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 unitMark: "UN",
                 buildId: data.form.buildId,
                 num: data.form.unit_num,
@@ -330,7 +332,7 @@ export default {
 
         const editInfo = () =>{
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 unitMark: "UN",
                 unitId: props.id,
                 buildId: data.form.buildId,

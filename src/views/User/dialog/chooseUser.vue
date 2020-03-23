@@ -27,6 +27,7 @@
 import { reactive, watch, onMounted, onBeforeMount, computed } from '@vue/composition-api';
 import { DelCheckIn } from "@/api/adminApi/user";
 import { EditHouse } from "@/api/adminApi/home";
+import { setCommunity, getCommunity  } from "@/utils/app";
 // 组件
 import TableVue from "@/components/Table";  
 export default {
@@ -43,7 +44,10 @@ export default {
     },
     setup(props, { root, emit, refs }) {
         const userName = computed(() => root.$store.state.app.username);
+
+        const marks = getCommunity();
         const data = reactive({
+            
             username: userName,
             chooseUserFlag: false,
             userId: "",
@@ -65,7 +69,7 @@ export default {
                 requestData: {
                     url: "getUserList",
                     data: {
-                        mark: "MQ",
+                        mark: marks,
                         userMark: "US",
                         current: 1,
                         size: 10000
@@ -103,7 +107,7 @@ export default {
             let requestData = {
                 url: "getUserList",
                 data:{
-                    mark: "MQ",
+                    mark: marks,
                     userMark: "US",
                     current: 1,
                     size: 10,
@@ -133,7 +137,7 @@ export default {
 
         
         return {
-            data, 
+            data, marks,
             openDialog, close, select, choose
 
         }

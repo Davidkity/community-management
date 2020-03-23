@@ -19,6 +19,7 @@ export default {
             clearableFlag: false,
             initOption: [],
             option: [
+                { value: "", label: "请选择" },
                 { value: "name", label: "姓名" },
                 { value: "phone", label: "手机号" },
                 { value: "email", label: "邮箱" },

@@ -1,5 +1,18 @@
 <template>
     <div class="unit">
+         <!--头-->
+        <div class="unit-content-top" style="height:90px" >
+            <div class="search-title">
+                <div> <p class="title">房屋信息</p> </div>
+                    <div>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>资产管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>房屋信息</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+            </div>
+        </div>
         <div class="unit-content-top" :style="data.unit_top_height">
             <div class="search-title">
                 <el-row :gutter="20">
@@ -93,11 +106,12 @@
                     <el-table-column prop="houseStatus" label="房屋状态" width="100"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="danger" @click="deleteItem(scope.row.houseId)">删除</el-button>
-                            <el-button size="mini" type="success" @click="dialogEdit(scope.row.houseId, 
+                            <el-button size="mini" type="text" @click="deleteItem(scope.row.houseId)">删除</el-button>
+                            <el-button size="mini" type="text" @click="dialogEdit(scope.row.houseId, 
                                                                                      scope.row.preCode,
                                                                                      scope.row.midCode,
                                                                                      scope.row.sufCode)">编辑</el-button>
+                            <el-button size="mini" type="text" @click="costItemSet(scope.row.houseId)">费用项</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -134,7 +148,8 @@ import { GetHouseList, GetBuildList, DeleteHouse } from "@/api/adminApi/home";
 import DialogEditHouse from "./dialog/editHouse";
 import DialogChooseBuild from "./dialog/chooseBuild";
 import { global } from "@/utils/global_V3.0.js";
-import { ref, reactive, onMounted } from '@vue/composition-api'
+import { ref, reactive, onMounted } from '@vue/composition-api';
+import { setCommunity, getCommunity  } from "@/utils/app";
 export default {
     components: {
         DialogEditHouse,
@@ -144,6 +159,7 @@ export default {
         // console.log(root.$route.params.buildId);
         
         const data = reactive({
+            marks: getCommunity(),
             unit_top_height: "height:132px",
             moreConditionSelect: "更多",
             conditionIsHidden: "true",
@@ -263,7 +279,7 @@ export default {
         const search = () => {
             // return false;
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 houseMark: "HO",
                 buildId: data.selectOptions.search_buildId,
                 unitNum: data.selectOptions.search_unitNum,
@@ -317,7 +333,7 @@ export default {
          */
         const getList = (() => {
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 houseMark: "HO",
                 current: data.page.pageNumber,
                 size: data.page.pageSize
@@ -378,6 +394,16 @@ export default {
             console.log(value)
         }
         
+        const costItemSet = (houseId) => {
+            console.log("houseId: " + houseId);
+            // 路由跳转
+            root.$router.push({
+                path: `/HouseCostItem/${houseId}`  // es6的写法
+                // params: {
+                //     userId: data.userId
+                // }
+            });
+        }
         /**
             生命周期
          */
@@ -394,7 +420,7 @@ export default {
             // 方法、函数
             changeSelect, cleanBuildId, search, tableRowClassName,handleSizeChange,handleCurrentChange, handleSelectionChange, 
             deleteAll, deleteItem, confirmDelete, getList, dialogEdit, dialogInfo, 
-            formatNum, formatLayer, formatArea, formatPrice, formatHouseNum, addHouse, chooseBuild
+            formatNum, formatLayer, formatArea, formatPrice, formatHouseNum, addHouse, chooseBuild, costItemSet
 
         }
     }
@@ -474,4 +500,13 @@ export default {
     background: #f0f9eb;
  }
 
+.title {
+    font-size: 24px;
+    font-weight: 10px;
+    
+}
+.el-breadcrumb__item {
+    font-size: 14px;
+    margin-top: 15px;
+}
 </style>

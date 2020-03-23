@@ -1,5 +1,18 @@
 <template>
     <div class="userMember">
+        <!--头-->
+        <div class="user-content-top" style="height:90px" >
+            <div class="content-title" style="line-height: 25px;">
+                <div> <p class="title">业主成员</p> </div>
+                    <div>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>业主管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>业主成员</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+            </div>
+        </div>
         <div class="user-content-top" :style="data.house_top_height">
             <div class="content-title">
                 <el-row :gutter="20">
@@ -11,6 +24,7 @@
             <div class="content-body">
                 <el-row v-model="data.ownerInfo" type="flex" class="row-bg">
                     <el-col :span="4">
+                    <!--
                         <div class="demo-image__placeholder">
                             <div class="block">
                                 <el-image class="img" :src="data.imgSrc"  fit="fill">
@@ -21,6 +35,8 @@
                                 
                             </div>
                         </div>
+                    -->
+                        <Uploadimg :imgName.sync="data.ownerInfo.img" :config="uploadImgConfig"></Uploadimg>
                     </el-col>
                     
                     <el-col :span="20">
@@ -102,30 +118,42 @@
                     :userId.sync = "data.ownerInfo.userId"     :code.sync = "data.ownerInfo.code"
                     :name.sync = "data.ownerInfo.name"         :sex.sync = "data.ownerInfo.sex"
                     :age.sync = "data.ownerInfo.age"           :idCard.sync = "data.ownerInfo.idCard"
-                    :phone.sync = "data.ownerInfo.phone"        :img.sync = "data.ownerInfo.img"
+                    :phone.sync = "data.ownerInfo.phone"       :img.sync = "data.ownerInfo.img"
                     :createBy.sync = "data.ownerInfo.createBy" :content.sync = "data.ownerInfo.content"></ChooseUser>
     </div>
 </template>
 
 <script>
 import { global } from "@/utils/global_V3.0.js";
-import { reactive } from '@vue/composition-api';
+import { reactive, onMounted } from '@vue/composition-api';
 import { GetMemberList, DelMember } from "@/api/adminApi/user";
+import { setCommunity, getCommunity  } from "@/utils/app";
 
 //组件
 import TableVue from "@/components/Table"; 
 import AddUserDialog from "./dialog/addUser";
 import ChooseUser from "./dialog/chooseUser";
+import Uploadimg from "@/components/Uploadimg";
+
 
 export default {
     name: "UserMember",
-    components: { TableVue, AddUserDialog, ChooseUser },
+    components: { TableVue, AddUserDialog, ChooseUser, Uploadimg },
 
     setup(props, {  root, refs }) {
         const { confirm } = global();
+
+        // 图片上传配置
+        const uploadImgConfig = reactive({
+            action: "http://localhost:8081/api/image/upload",
+        });
+        const marks = getCommunity();
         const data = reactive({
+            
             hiddenAddMember: true,
             imgSrc: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+            
+            imgName: "",
 
             chooseFlag: false,
 
@@ -166,7 +194,7 @@ export default {
                 requestData: {
                     url: "getUserMemberList",
                     data: {
-                        mark: "MQ",
+                        mark: marks,
                         ownerId: 0,
                         current: 1,
                         size: 1000
@@ -201,7 +229,7 @@ export default {
             let requestData = {
                 url: "getUserMemberList",
                 data: {
-                    mark: "MQ",
+                    mark: marks,
                     ownerId: data.ownerInfo.userId,
                     current: 1,
                     size: 1000
@@ -233,7 +261,7 @@ export default {
         const memberDelete = () => {
             console.log("data.memberId: " + data.memberId);
             let requestData = {
-                mark: "MQ",
+                mark: marks,
                 ownerId: data.ownerInfo.userId,
                 memberId: data.memberId
             }
@@ -249,8 +277,12 @@ export default {
 
             })
         }
+
+        onMounted(() => {
+
+        })
         return {
-            data,
+            data, marks, uploadImgConfig,
             selectUser, addMember, getMembers, editUserMember, delUserMember, memberDelete
         }
     }
@@ -275,6 +307,7 @@ export default {
     border-top: 2px solid #e7eaec;
     background-color: #fff;
     @include webkit(box-sizing,border-box); 
+    
     .content-title{
         line-height: 35px;
         font-weight:600;
@@ -332,5 +365,15 @@ export default {
     font-weight:600;
     padding: 12px 20px 12px 20px;
     color: rgb(104, 107, 109);
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 10px;
+    
+}
+.el-breadcrumb__item {
+    font-size: 14px;
+    margin-top: 15px;
 }
 </style>

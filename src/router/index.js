@@ -35,8 +35,8 @@ const routes = [
    * 主控制台
    */
   {
-    path: "/console",
-    name: "Console",
+    path: "/community",
+    name: "Community",
     redirect: "index",
     meta: {
       name: "小区管理",
@@ -44,7 +44,7 @@ const routes = [
     },
     component: Layout,
     children:[
-      // 主控制台首页
+      // 我的小区
       {
         path: "/index",
         name: "Index",
@@ -52,7 +52,17 @@ const routes = [
           name: "我的小区",
           icon: "my-plot"
         },
-        component: () => import("../views/Console/index.vue")
+        component: () => import("../views/Community/myPlot.vue")
+      },
+      // 小区管理
+      {
+        path: "/plotManage",
+        name: "PlotManage",
+        meta: {
+          name: "小区管理",
+          icon: "my-plot"
+        },
+        component: () => import("../views/Community/plotManage.vue")
       }
     ]
   },
@@ -110,6 +120,19 @@ const routes = [
           icon: "house"
         },
         component: () => import("../views/Jewel/components/addHouse.vue")
+      },
+      /**
+       * 房屋费用项 AddHouse
+       */
+      {
+        path: "/houseCostItem/:houseId",
+        name: "HouseCostItem",
+        hidden: true,
+        meta: {
+          name: "房屋费用项",
+          icon: "house"
+        },
+        component: () => import("../views/Jewel/houseCostItem.vue")
       }
     ]
   },
@@ -170,6 +193,59 @@ const routes = [
     ]
   },
 
+  /**
+   * 业主管理
+   */
+  {
+    path: "/expense",
+    name: "Expense",
+    meta: {
+      name: "费用管理",
+      icon: "user"
+    },
+    component: Layout,
+    children:[
+      // 业主信息管理页面
+      {
+        path: "/expenseSet",
+        name: "ExpenseSet",
+        meta: {
+          name: "费用设置",
+          icon: "user-info"
+        },
+        component: () => import("../views/Expense/expenseSet.vue")
+      },
+    ]
+  },
+
+
+
+ /**
+   * 系统管理
+   */
+  {
+    path: "/sysSet",
+    name: "SysSet",
+    meta: {
+      name: "系统管理",
+      icon: "user"
+    },
+    component: Layout,
+    children:[
+      // 费用项设置
+      {
+        path: "/costItemSet",
+        name: "CostItemSet",
+        meta: {
+          name: "费用项设置",
+          icon: "user-info"
+        },
+        component: () => import("../views/SysSet/costItemSet.vue")
+      },
+    ]
+  }
+
+  
 
 
 

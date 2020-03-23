@@ -42,6 +42,8 @@
 <script>
 import { reactive, ref, watch, computed, onMounted } from "@vue/composition-api";
 import { GetHouseList } from "@/api/adminApi/home";
+import { setCommunity, getCommunity  } from "@/utils/app";
+
 export default {
     name: "chooseUnit",
     props: {
@@ -68,7 +70,9 @@ export default {
     setup(props, { root, emit }) {
 
         const data = reactive({
-            
+
+            marks: getCommunity(),
+
             dialogChooseFlag: false,
             selectValue: "",
             button_type: "",
@@ -159,7 +163,7 @@ export default {
         // 获取数据
         const getInfo = (buildId, unitId, houseNum) => {
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 houseMark: "HO",
                 // userId: data.userId,
                 buildId: buildId, 

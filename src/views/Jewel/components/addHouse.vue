@@ -182,6 +182,7 @@
 <script>
 import { FindHouseTypePre, FindHouseTypeMid, FindHouseTypeSuf, AddHouse} from "@/api/adminApi/home";
 import { reactive, onMounted, computed } from '@vue/composition-api';
+import { setCommunity, getCommunity  } from "@/utils/app";
 import DialogChooseBuild from "../dialog/chooseBuild";
 import DialogAddBuild from "../dialog/addBuild";
 import DialogChooseUnit from "../dialog/chooseUnit";
@@ -198,6 +199,7 @@ export default {
     setup(props, { root, refs }) {
         const userName = computed(() => root.$store.state.app.username);
         const data = reactive({
+            marks: getCommunity(),
             username: userName,
             active: 1,
             nextText: "下一步",
@@ -348,7 +350,7 @@ export default {
             console.log("检查信息")
             if(checkHouseInfo() == -1) return false;
             let requestData = {
-                mark: "MQ",
+                mark: data.marks,
                 houseMark: "HO",
                 buildId: data.buildId,
                 unitId: data.unit.id,

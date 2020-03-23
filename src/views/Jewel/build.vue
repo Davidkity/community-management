@@ -1,5 +1,19 @@
 <template>
     <div class="build">
+         <!--头-->
+        <div class="build-content-top" style="height:90px" >
+            <div class="search-title">
+                <div> <p class="title">楼栋信息</p> </div>
+                    <div>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>资产管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>楼栋信息</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+            </div>
+        </div>
+
         <div class="build-content-top">
             <div class="search-title">
                 <el-row :gutter="20">
@@ -11,13 +25,14 @@
             <div class="search-content">
                 <el-row :gutter="14">
                     
-                    <el-col :span="7">
+                    <el-col :span="6">
                         <el-input
-                            placeholder="请输入楼栋编号"
+                            placeholder="请输入楼栋编码"
                             v-model="search_code"
                             clearable>
                         </el-input>
                     </el-col> 
+                    <el-col :span="1" class="empty">.</el-col>
                     <el-col :span="6">
                         <el-input
                             placeholder="请输入楼栋号"
@@ -25,7 +40,8 @@
                             clearable style="width: 100%;">
                         </el-input>
                     </el-col>
-                    <el-col :span="7">
+                    <el-col :span="1" class="empty">.</el-col>
+                    <el-col :span="6">
                         <el-input
                             placeholder="请输入楼栋名称"
                             v-model="search_name"
@@ -98,13 +114,16 @@
 import { GetList, Delete } from "@/api/adminApi/home";
 import DialogInfo from "./dialog/addBuild";
 import { global } from "@/utils/global_V3.0.js";
-import { ref, reactive, onMounted } from '@vue/composition-api'
+import { ref, reactive, onMounted, watch } from '@vue/composition-api';
+import { setCommunity, getCommunity  } from "@/utils/app";
+// 中央事件
+import EventBus from "@/utils/bus"
 export default {
     components: {
         DialogInfo
     },
     setup(props, {root}) {
-
+        const marks = getCommunity();
         // const data = reactive({
         //     search_id: "",
         //     search_code: "",
@@ -152,6 +171,7 @@ export default {
             声明方法
          */
 
+
         const dialogInfo = (id) =>{
             infoId.value = id;
             buttonType.value = "editButton";
@@ -160,7 +180,7 @@ export default {
         }
         const search = () => {
             let requestData = {
-                mark:"MQ",
+                mark: marks,
                 code: search_code.value,
                 name: search_name.value,
                 num: search_num.value,
@@ -193,7 +213,6 @@ export default {
             // 映射出数据（筛选出id）
             let buildId = val.map(item => item.buildId)
             deleteInfoId.value = buildId;
-            console.log("buildId: " + buildId);
         }
         //每页的条数
         const handleSizeChange = (val) =>{
@@ -211,7 +230,7 @@ export default {
          */
         const getList = (() => {
             let requestData = {
-                mark:"MQ",
+                mark: marks,
                 buildId: "",
                 code: "",
                 name: "",
@@ -292,7 +311,7 @@ export default {
             getList();
         })
         return {
-            
+            marks,
             // ref
             search_num, search_code, search_name, dialog_info, totals, loading, infoId, buttonType, dialog_name,
             //reactive
@@ -310,9 +329,10 @@ export default {
 
 .build {
     height: 100%;
-    
 }
-
+.empty {
+    color: #fff;
+}
 .build-content-top {
     // position: fixed;
     z-index: 8999;
@@ -371,4 +391,14 @@ export default {
 .el-table .success-row {
     background: #f0f9eb;
  }
+
+.title {
+    font-size: 24px;
+    font-weight: 10px;
+    
+}
+.el-breadcrumb__item {
+    font-size: 14px;
+    margin-top: 15px;
+}
 </style>

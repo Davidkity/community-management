@@ -1,5 +1,18 @@
 <template>
     <div class="house">
+        <!--头-->
+        <div class="house-content-top" style="height:90px" >
+            <div class="search-title">
+                <div> <p class="title">业主信息</p> </div>
+                    <div>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>业主管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>业主信息</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+            </div>
+        </div>
         <!--条件查询-->
         <div class="house-content-top" :style="data.house_top_height">
             <div class="search-title">
@@ -145,6 +158,7 @@ import { global } from "@/utils/global_V3.0.js";
 import { ref, reactive, onMounted } from '@vue/composition-api';
 import { UserDelete } from "@/api/adminApi/user";
 import { GetList, GetUnitList, GetHouseList } from "@/api/adminApi/home";
+import { setCommunity, getCommunity  } from "@/utils/app";
 
 //组件
 import TableVue from "@/components/Table";  
@@ -158,8 +172,10 @@ export default {
     setup(props, { root, refs }) {
 
         const { confirm } = global();
+        const marks = getCommunity();
 
         const data = reactive({
+            
             //业主的标识
             isOwner: "",
 
@@ -184,6 +200,7 @@ export default {
             userInfoDialog: false,
             buttonType: "",
             dialogName: "",
+            userIdItem: [],
             userId: 0,
 
             //房屋解绑
@@ -217,7 +234,7 @@ export default {
                 requestData: {
                     url: "getUserList",
                     data: {
-                        mark: "MQ",
+                        mark: marks,
                         userMark: "US",
                         current: 1,
                         size: 10
@@ -256,24 +273,12 @@ export default {
             }
         }
 
-        
 
-
-
-
-        // 查询
-        // search_name: "",
-        //         search_idCard: "",
-        //         search_phone: "",
-        //         search_idCard: "",
-        //         search_buildValue: "",
-        //         search_unitValue: "",
-        //         search_houseValue: ""
         const search = () => {
             let requestData = {
                 url: "getUserList",
                 data:{
-                    mark: "MQ",
+                    mark: marks,
                     userMark: "US",
                     current: 1,
                     size: 10,
@@ -288,7 +293,6 @@ export default {
                 
             }
             getList(requestData);
-            console.log("楼栋id: " + data.selectOptions.search_buildValue)
         }
         /**********************************表格************************************************************** */
         // 添加业主
@@ -304,7 +308,7 @@ export default {
             data.userId = row.userId;
             data.userInfoDialog = true;
             data.dialogName = "编辑业主";
-            data.buttonType = "eidtUser";
+            data.buttonType = "editUser";
         }
 
         //入住房屋
@@ -364,14 +368,14 @@ export default {
         }
         // 批量删除
         const handlerBatchDel = () => {
-            let id = data.tableRow.idItem;
-            if(!id || id.length == 0){
+            if(!data.tableRow.idItem || data.tableRow.idItem == 0){
                 root.$message({
                     message: "请选择需要删除的用户",
                     type: "error"
                 })
                 return false;
             }
+            data.userIdItem = data.tableRow.idItem.map(item => item.communityId);
             confirm({
                 context: "确认删除当前所选全部信息，确认后将无法恢复！！",
                 type: "warning",
@@ -380,7 +384,7 @@ export default {
         }
         // 单个删除
         const handlerDel = (params) => {
-            data.tableRow.idItem = [params.userId];
+            data.userIdItem = [params.userId];
             confirm({
                 context: "确认删除当前所选信息，确认后将无法恢复！！",
                 type: "warning",
@@ -389,7 +393,7 @@ export default {
         }
         // 删除数据
         const userDelete= () => {
-            let requestData = JSON.stringify(data.tableRow.idItem);
+            let requestData = JSON.stringify(data.userIdItem);
             UserDelete(requestData).then(response => {
                 let responseData = response.data;
                 refs.userTable.refreshData();
@@ -408,7 +412,7 @@ export default {
         // 加载 楼栋，单元，房屋 数据
         const loadBuild = () => {
             let requestData = {
-                mark: "MQ",
+                mark: marks,
                 current: 1,
                 size: 1000000
             }
@@ -426,7 +430,7 @@ export default {
         }
         const loadUnit = () => {
             let requestData = {
-                mark: "MQ",
+                mark: marks,
                 unitMark: "UN",
                 buildId: data.selectOptions.search_buildValue,
                 current: 1,
@@ -444,7 +448,7 @@ export default {
         }
         const loadHouse = () => {
             let requestData = {
-                mark: "MQ",
+                mark: marks,
                 houseMark: "HO",
                 buildId: data.selectOptions.search_buildValue,
                 unitId: data.selectOptions.search_unitValue,
@@ -464,7 +468,7 @@ export default {
             loadHouse()
         })
         return {
-            data,
+            data, marks,
             // 查询条件
             changeSelect, search, cleanBuildId, loadBuild, buildChange, loadUnit, unitChange, loadHouse,
             // 表格
@@ -549,4 +553,13 @@ export default {
     background: #f0f9eb;
  }
 
+.title {
+    font-size: 24px;
+    font-weight: 10px;
+    
+}
+.el-breadcrumb__item {
+    font-size: 14px;
+    margin-top: 15px;
+}
 </style>

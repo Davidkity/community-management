@@ -34,6 +34,7 @@
 <script>
 import { reactive, ref, watch, computed } from "@vue/composition-api";
 import { GetList } from "@/api/adminApi/home";
+import { setCommunity, getCommunity  } from "@/utils/app";
 export default {
     name: "chooseBuild",
     props: {
@@ -51,6 +52,7 @@ export default {
     setup(props, { root, emit }) {
 
         const data = reactive({
+            marks: getCommunity(),
             timer: null,
             dialogChooseFlag: false,
             selectValue: "",
@@ -101,7 +103,7 @@ export default {
         // 获取数据
         const getInfo = (buildNum) => {
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 buildId: "",
                 code: "",
                 name: "",

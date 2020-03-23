@@ -161,7 +161,8 @@ export default {
         // 勾选时触发
         const thatSelectCheckBox = (val) => {
             let rowData = {
-                idItem: val.map(item => item.userId)
+                // idItem: val.map(item => item.userId)
+                idItem: val
             }
             emit("update:tableRow", rowData);
         }

@@ -57,6 +57,7 @@
 <script>
 import { FindHouseTypePre, FindHouseTypeMid, FindHouseTypeSuf, GetHouseList, EditHouse } from "@/api/adminApi/home";
 import { reactive, ref, watch, computed, onMounted } from "@vue/composition-api";
+import { setCommunity, getCommunity  } from "@/utils/app";
 export default {
     name: "editHouse",
     props: {
@@ -84,6 +85,7 @@ export default {
     setup(props, { root, refs, emit }) {
         const userName = computed(() => root.$store.state.app.username);
         const data = reactive({
+            marks: getCommunity(),
             username: userName,
             dialog_name: "编辑房屋信息",
             dialog_flag: false,
@@ -136,7 +138,7 @@ export default {
 
         const getHouseInfo = () => {
             let requestData = {
-                mark: "MQ",
+                mark: data.marks,
                 houseMark: "HO",
                 houseId: props.houseId,
                 current: 1,
@@ -164,7 +166,7 @@ export default {
         const submit = () => {
 
             let requestData = {
-                mark: "MQ",
+                mark: data.marks,
                 houseMark: "HO",
                 houseId: props.houseId,
                 buildId: data.buildId,

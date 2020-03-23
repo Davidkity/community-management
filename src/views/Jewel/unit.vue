@@ -1,5 +1,18 @@
 <template>
     <div class="unit">
+        <!--头-->
+        <div class="unit-content-top" style="height:90px" >
+            <div class="search-title">
+                <div> <p class="title">单元信息</p> </div>
+                    <div>
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>资产管理</el-breadcrumb-item>
+                            <el-breadcrumb-item>单元信息</el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+            </div>
+        </div>
         <div class="unit-content-top" :style="data.unit_top_height">
             <div class="search-title">
                 <el-row :gutter="20">
@@ -119,7 +132,9 @@ import { GetUnitList, DeleteUnit, GetBuildList } from "@/api/adminApi/home";
 import DialogInfo from "./dialog/unitOperate";
 import DialogChooseBuild from "./dialog/chooseBuild";
 import { global } from "@/utils/global_V3.0.js";
-import { ref, reactive, onMounted } from '@vue/composition-api'
+import { ref, reactive, onMounted } from '@vue/composition-api';
+
+import { setCommunity, getCommunity  } from "@/utils/app";
 export default {
     components: {
         DialogInfo,
@@ -128,6 +143,7 @@ export default {
     setup(props, { root }) {
         // console.log(root.$route.params.buildId);
         const data = reactive({
+            marks: getCommunity(),
             unit_top_height: "height:132px",
             moreConditionSelect: "更多",
             conditionIsHidden: "true",
@@ -235,7 +251,7 @@ export default {
         const search = () => {
             console.log("buildId: " + data.selectOptions.search_buildId);
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 unitMark: "UN",
                 unitId: "",
                 buildId: data.selectOptions.search_buildId,
@@ -291,7 +307,7 @@ export default {
          */
         const getList = (() => {
             let requestData = {
-                mark:"MQ",
+                mark: data.marks,
                 unitMark: "UN",
                 unitId: "",
                 buildId: "",
@@ -306,7 +322,6 @@ export default {
             // data.loading = true;
             GetUnitList(requestData).then(response => {
                 let responseData = response.data.data;
-                // console.log(responseData);
                 // 更新数据
                 data.tableData.item = responseData.data;
                 // 更新页码总数
@@ -346,7 +361,6 @@ export default {
         }
         // 确认删除
         const confirmDelete = (value) => {
-            console.log("确认： " + data.deleteInfoId);
             let requestData = JSON.stringify(data.deleteInfoId)
             DeleteUnit(requestData).then(response => {
                 data.deleteInfoId = "";
@@ -354,7 +368,6 @@ export default {
             }).catch(error => {
 
             });
-            console.log(value)
         }
         
         /**
@@ -454,4 +467,14 @@ export default {
     background: #f0f9eb;
  }
 
+
+.title {
+    font-size: 24px;
+    font-weight: 10px;
+    
+}
+.el-breadcrumb__item {
+    font-size: 14px;
+    margin-top: 15px;
+}
 </style>

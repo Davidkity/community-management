@@ -144,7 +144,7 @@ export default {
         //登录按钮
         const loginButton = reactive({
             // 登录按钮的状态（是否禁用）
-            status: true,
+            status: false,
             model: "login"
         });
         // 表单绑定数据
@@ -174,9 +174,9 @@ export default {
             passwords: [
             { validator: validatePasswords, trigger: 'blur' }
             ],
-            code: [
-            { validator: validateCode, trigger: 'blur' }
-            ]
+            // code: [
+            // { validator: validateCode, trigger: 'blur' }
+            // ]
         });
         /*******************************************************************************************************
         * 声明函数
@@ -218,7 +218,6 @@ export default {
         * 获取验证码
         */
         const getSms = (() => {
-            console.log("进入 getSms 方法");
             //进行提示
             // if(ruleForm.username == ''){
             //     context.root.$message.error('用户名不能为空！！');
@@ -240,13 +239,12 @@ export default {
                 status: true,
                 text: "发送中"
             });
-            //模拟延时请求 3秒
+            //模拟延时请求 1秒
             setTimeout(() => {
                 console.log(data.email);
                 console.log(data.module);
                 GetSms(data).then(response => {
                     let data = response.data;
-                    console.log(data);
                     context.root.$message({
                         message: data.message,
                         type: "success"
@@ -264,7 +262,7 @@ export default {
                     })
                     console.log(error);
                 });
-            }, 3000);
+            }, 1000);
             
         })
         /**
@@ -297,7 +295,7 @@ export default {
 
                     // 路由跳转
                     context.root.$router.push({
-                        name: "Console"
+                        name: "Community"
                     });
                 }).catch(error => {
 

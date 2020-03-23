@@ -1,6 +1,9 @@
 
 import { Login } from "@/api/adminApi/login";
-import { setToKen, removeToKen, setUserName, getUsername, removeUsername } from "@/utils/app";
+import { setToKen, removeToKen, 
+        setUserName, getUsername, removeUsername, 
+        setUserId, getUserId, removeUserId, 
+        setCommunity, getCommunity, removeCommunity } from "@/utils/app";
 
 const state =  {
     // html5 本地存储
@@ -9,13 +12,16 @@ const state =  {
     // isCollapse: JSON.parse(Cookie.get("isCollapse")) || false,
     // count
     toKen: "",
-    username: getUsername() || ""
+    username: getUsername() || "",
+    id: "",
+    community: getCommunity() || ""
 }
 
 const getters = {// 相当于computed
     // count: state => state.count + 10
     // username: state.username
-    
+    id: state => state.id,
+    community: state => state.community
 
 }
 
@@ -33,8 +39,12 @@ const mutations = {// 同步函数 使用  root.$store.commit("SET_COUNT",100) �
     SET_USERNAME(state, value){
         state.username = value;
     },
-
-    
+    SET_USERID(state, value){
+        state.id = value;
+    },
+    SET_COMMUNITY(state, value){
+        state.community = value;
+    },
 
 }
 
@@ -48,20 +58,32 @@ const actions = {
                 let data = response.data.data;
                 content.commit("SET_TOKEN",data.token);
                 content.commit("SET_USERNAME",data.username);
+                // content.commit("SET_USERID",data.id);
                 setToKen(data.token);
                 setUserName(data.username);
+                setUserId(data.id);
                 reoslve(response);
             }).catch(error => {
                 reject(error);
             })
         })
     },
+    // setCommunity({commit}, requestData) {
+    //     return new Promise((reoslve, reject) => {
+            
+    //     })
+    // },
+    
     exit({ commit }){
         return new Promise((reoslve, reject) => {
             removeToKen();
             removeUsername();
+            removeUserId();
+            removeCommunity();
             commit("SET_TOKEN","");
             commit("SET_USERNAME","");
+            commit("SET_USERID","");
+            commit("SET_COMMUNITY","");
             reoslve();
         })
         

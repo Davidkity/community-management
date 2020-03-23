@@ -38,6 +38,7 @@
 import { reactive, watch, onMounted, onBeforeMount, computed } from '@vue/composition-api';
 import { DelCheckIn } from "@/api/adminApi/user";
 import { EditHouse } from "@/api/adminApi/home";
+import { setCommunity, getCommunity  } from "@/utils/app";
 // 组件
 import TableVue from "@/components/Table";  
 export default {
@@ -54,6 +55,7 @@ export default {
     },
     setup(props, { root, emit, refs }) {
         const userName = computed(() => root.$store.state.app.username);
+        const marks = getCommunity();
         const data = reactive({
             username: userName,
             checkOutFlag: false,
@@ -77,7 +79,7 @@ export default {
                 requestData: {
                     url: "getCheckInList",
                     data: {
-                        mark: "MQ",
+                        mark: marks,
                         checkInMark: "CI",
                         userId: props.userId,
                         current: 1,
@@ -115,7 +117,7 @@ export default {
             let requestData = {
                 url: "getCheckInList",
                 data: {
-                    mark: "MQ",
+                    mark: marks,
                     checkInMark: "CI",
                     userId: data.userId,
                     houseNum: data.selectValue,
@@ -130,13 +132,13 @@ export default {
         const checkOut = (params) => {
             console.log(params);
             let requestData = {
-                mark: "MQ",
+                mark: marks,
                 checkInMark: "CI",
                 checkInId: params.checkInId
             }
             DelCheckIn(requestData).then(response => {
                 let changeHouseStatusData = {
-                    mark: "MQ",
+                    mark: marks,
                     houseMark: "HO",
                     houseId: params.houseId,
                     houseStatusCode: "FREE",
@@ -160,7 +162,7 @@ export default {
             let requestData = {
                 url: "getCheckInList",
                 data: {
-                    mark: "MQ",
+                    mark: marks,
                     checkInMark: "CI",
                     userId: data.userId,
                     current: 1,
@@ -172,7 +174,7 @@ export default {
 
         
         return {
-            data, 
+            data, marks,
             openDialog, close, select, getList, checkOut
 
         }

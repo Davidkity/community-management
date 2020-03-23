@@ -3,7 +3,6 @@ import service from "@/utils/request";
  * 获取验证码
  */
 export function GetSms(data){
-    console.log("GetSms方法")
     return service.request({
         method: "post",
         url: "/email/getCheckCode/",
@@ -14,6 +13,19 @@ export function GetSms(data){
  /**
   * 获取用户角色
   */
+
+
+  /**
+   * 获取用户的所关联的小区
+   * @param {*} data 
+   */
+export function GetCommunity(data = {}){
+    return service.request({
+        method: "post",
+        url: "/uCommunity/getCommunityName/",
+        data: data
+    })
+}
 
   /**
    * 登录

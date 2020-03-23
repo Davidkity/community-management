@@ -5,6 +5,8 @@ Vue.use(Vuex);
 
 import app from "./modules/app";
 import home from "./modules/home";
+import common from "./modules/common";
+import community from "./modules/community";
 
 export default new Vuex.Store({
   // state: {},
@@ -12,7 +14,9 @@ export default new Vuex.Store({
   // actions: {},
   modules: {
     app,
-    home
+    home,
+    common,
+    community
   }
 
 });
