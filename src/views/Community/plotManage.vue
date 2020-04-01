@@ -131,7 +131,6 @@ export default {
 
         //刷新数据
         const getList = (params) => {
-            console.log("跟新数据")
             refs.plotTable.refreshData(params);
         }
 
@@ -146,11 +145,11 @@ export default {
         
         // 修改
         const editPlot = (params) => {
-            // console.log(params)
-            // data.dialog_info = true;
-            // data.buttonType = "editCommunity";
-            // data.communityId = params.communityId;
-            // data.dialog_name = "修改小区";
+            console.log(params)
+            data.dialog_info = true;
+            data.buttonType = "editCommunity";
+            data.communityId = params.communityId;
+            data.dialog_name = "修改小区";
         }
 
         // 批量删除

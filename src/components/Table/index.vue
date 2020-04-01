@@ -168,12 +168,12 @@ export default {
         }
         // 刷新数据(供外部调用)
         const refreshData = (params) => {
-            console.log("刷新数据的参数");
-            if(params == null){
-                console.log(params == null);
-            }else{
-                console.log(params);
-            }
+            // console.log("刷新数据的参数");
+            // if(params == null){
+            //     console.log(params == null);
+            // }else{
+            //     console.log(params);
+            // }
             
             params == null ? tableLoadData(data.tableConfig.requestData) : tableLoadData(params);
         }

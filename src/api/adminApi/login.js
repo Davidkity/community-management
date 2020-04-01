@@ -37,13 +37,35 @@ export function Login(data){
         data: data
     })
 }
-   /**
-    * 注册
-    */
-   export function Register(data){
-       return service.request({
-           method: "post",
-           url: "/admin/register/",
-           data: data
-       })
-   }
+/**
+* 注册
+*/
+export function Register(data){
+    return service.request({
+        method: "post",
+        url: "/admin/register/",
+        data: data
+    })
+}
+/**
+* 注册
+*/
+export function Edit(data){
+    return service.request({
+        method: "post",
+        url: "/admin/edit/",
+        data: data
+    })
+}
+
+/**
+* 添加账号
+*/
+export function AddU(data){
+    return service.request({
+        method: "post",
+        url: "/admin/addU/",
+        data: data
+    })
+}
+

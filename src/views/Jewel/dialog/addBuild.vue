@@ -50,12 +50,12 @@ export default {
          数据
          */
          const data = reactive({
-
+            username: userName,
             marks: getCommunity(),
             dialog_name: "添加楼栋",
             dialog_info_flag: false,
             formLabelWidth: "100px",
-            username: userName,
+            
             build_id: "",
             build_code: "",
             button_type: "",

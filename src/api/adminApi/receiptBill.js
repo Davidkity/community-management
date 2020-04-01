@@ -1,13 +1,10 @@
-
-
 import service from "@/utils/request";
-/**
- * 用户绑定业主
- */
-export function AddBindUser(data){
+
+// 添加收款单
+export function AddReceipt(data){
     return service.request({
         method: "post",
-        url: "/bindUser/addBindUser/",
+        url: "/receipt/addReceipt/",
         data: data
     })
 }

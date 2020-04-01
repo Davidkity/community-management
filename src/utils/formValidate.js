@@ -54,3 +54,20 @@ export function validateFormAge(value, callback){
     }
     }, 10);
 }
+
+// 验证整数数字
+export function validateNumber(fieldName, value, callback){
+    if (!value) {
+        return callback(new Error(fieldName + '不能为空'));
+    }
+    if (value == 0){
+        return callback(new Error(fieldName + '不能为零'));
+    }
+    setTimeout(() => {
+        if (!Number.isInteger(value)) {
+            callback(new Error('请输入数字值'));
+        }else{
+            callback();
+        }
+    }, 10);
+}

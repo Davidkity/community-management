@@ -105,6 +105,7 @@ export default {
         })
         //打开弹窗
         const openDialog = () => {
+            data.userId = props.userId;
             getList();
         }
         //关闭弹窗

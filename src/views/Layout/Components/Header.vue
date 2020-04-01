@@ -6,7 +6,7 @@
         
         <div class="pull-right ">
             <div class="pull-left">
-                
+              
                 <el-select v-model="data.communityCode"  @change="communityChange" placeholder="请选择小区" style="width:100px">
                     <el-option
                     v-for="item in data.communityOptions"
@@ -15,6 +15,7 @@
                     :value="item.code">
                     </el-option>
                 </el-select>
+                
                 <label style="width:100px; margin: 0 7px"> 小区 &nbsp;&nbsp;</label>
             </div>
             <div class="user-info pull-left">

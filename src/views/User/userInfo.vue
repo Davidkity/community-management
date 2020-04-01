@@ -375,7 +375,7 @@ export default {
                 })
                 return false;
             }
-            data.userIdItem = data.tableRow.idItem.map(item => item.communityId);
+            data.userIdItem = data.tableRow.idItem.map(item => item.userId);
             confirm({
                 context: "确认删除当前所选全部信息，确认后将无法恢复！！",
                 type: "warning",

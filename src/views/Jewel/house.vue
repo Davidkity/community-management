@@ -111,7 +111,7 @@
                                                                                      scope.row.preCode,
                                                                                      scope.row.midCode,
                                                                                      scope.row.sufCode)">编辑</el-button>
-                            <el-button size="mini" type="text" @click="costItemSet(scope.row.houseId)">费用项</el-button>
+                            <el-button size="mini" type="text" v-if="scope.row.statusCode != 'FREE'" @click="costItemSet(scope.row.houseId)">费用项</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -391,11 +391,9 @@ export default {
             }).catch(error => {
 
             });
-            console.log(value)
         }
         
         const costItemSet = (houseId) => {
-            console.log("houseId: " + houseId);
             // 路由跳转
             root.$router.push({
                 path: `/HouseCostItem/${houseId}`  // es6的写法

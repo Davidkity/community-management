@@ -147,3 +147,47 @@ export function DeleteHouse(data){
     })
 }
 
+//房屋添加费用项
+export function AddHouseCostItem(data){
+    return service.request({
+        method: "post",
+        url: "/houseCostItem/addHouseCostItem/",
+        data: data
+    })
+}
+
+// 获取房屋费用项信息
+export function GetHouseCostItem(data){
+    return service.request({
+        method: "post",
+        url: "/houseCostItem/getHouseCostItem/",
+        data: data
+    })
+}
+
+// 删除房屋费用项信息
+export function DeleteHouseCostItem(data){
+    return service.request({
+        method: "post",
+        url: "/houseCostItem/delHouseCostItem/",
+        data: data
+    })
+}
+
+// 批量创建费用
+export function BatchCreateFree(data){
+    return service.request({
+        method: "post",
+        url: "/house/batchCreateFree/",
+        data: data
+    })
+}
+
+
+
+
+
+
+
+
+

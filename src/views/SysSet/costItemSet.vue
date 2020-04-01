@@ -24,26 +24,26 @@
                 <el-row :gutter="14">
                     <el-col :span="6">
                         <el-input
-                            placeholder="请输入楼栋编号"
-                            v-model="search_code"
+                            placeholder="请输入费用项名称"
+                            v-model="data.selectOption.search_name"
                             clearable>
                         </el-input>
                     </el-col> 
                     <el-col :span="1" class="empty">.</el-col>
                     <el-col :span="6">
-                        <el-input
-                            placeholder="请输入楼栋号"
-                            v-model="search_num"
-                            clearable style="width: 100%;">
-                        </el-input>
+                        <el-select v-model="data.selectOption.search_computeWay" clearable placeholder="请选择计费方式" >
+                            <el-option
+                                v-for="item in data.computeWays"
+                                :key="item.code"
+                                :label="item.name"
+                                :value="item.code">
+                            </el-option>
+                        </el-select>
+                        
                     </el-col>
                     <el-col :span="1" class="empty">.</el-col>
                     <el-col :span="6">
-                        <el-input
-                            placeholder="请输入楼栋名称"
-                            v-model="search_name"
-                            clearable>
-                        </el-input>
+                        <SelectVue :config="data.configOption" :selectVal.sync="data.selectOption.search_startUse"></SelectVue>
                     </el-col>
                     <el-col :span="4">
                         <el-button type="primary" class="searchButton" @click="search" icon="el-icon-search">
@@ -65,32 +65,73 @@
             <!-- 表格数据 -->
             <TableVue ref="costItemTable" :config="data.configTable" :tableRow.sync="data.tableRow" >
                 
+                <template v-slot:use="slotData">
+                    <el-switch style="width:100px"
+                        v-model="slotData.data.startUse" 
+                        active-color="#13ce66" 
+                        inactive-color="#ff4949"
+                        active-value="Y"
+                        inactive-value="N"
+                        @change="useChange(slotData.data)"
+                        ></el-switch>
+                </template>
+
                 <template v-slot:operation="slotData">
-                    <el-button size="small"  @click="editCostItem(slotData.data)">修改</el-button>
-                    <el-button size="small"  @click="delCostItem(slotData.data)">删除</el-button>
+                    <el-button size="small"  @click="editCostItem(slotData.data.costItemId)">修改</el-button>
+                    <el-button size="small"  @click="delCostItem(slotData.data.costItemId)">删除</el-button>
                 </template>
                 <template v-slot:tableFooterLeft >
                     <el-button size="small"  @click="handlerBatchDel()">批量删除</el-button>
                 </template>
             </TableVue>
         </div>
+
+        <!-- 新增弹窗 -->
+        <CostItemDialog :costItemFlag.sync="data.costItemDialog" :uId.sync="data.uId" :costItemId.sync="data.costItemId" :buttonType.sync="data.buttonType" :dialogName.sync="data.dialogName"   @getChangeData="getList"></CostItemDialog>
     </div>
     
 </template>
 <script>
-import { reactive } from '@vue/composition-api';
-
+import { global } from "@/utils/global_V3.0.js";
+import { reactive, onMounted, computed } from '@vue/composition-api';
+import { EditCostItem, CostItemDel, GetComputeWay } from "@/api/adminApi/sys";
+import { getCommunity  } from "@/utils/app";
 //组件
 import TableVue from "@/components/Table";  
+import SelectVue from "@/components/Select";
+import CostItemDialog from "./dialog/costItemInfo";
 export default {
     name: "costItemSet",
-    components: { TableVue },
+    components: { TableVue, SelectVue, CostItemDialog },
 
-    setup(props, { root }) {
-
+    setup(props, { root, refs }) {
+        const { confirm } = global();
+        const marks = getCommunity();
+        const userName = computed(() => root.$store.state.app.username);
         const data = reactive({
-            
+            username: userName,
+            temmpMark: "",      //用于修改弹窗中显示的小区
+            // 用户id
+            uId: root.$store.getters['app/id'],
+            // 费用项id
+            costItemId: "",
+            // 费用项计费方式
+            computeWays: [],
+            // 选择条件
+            selectOption: {
+                search_name: "",
+                search_computeWay: "",
+                search_startUse: ""
+            },
 
+            configOption: {
+                clearFlag: true,
+                selectValue: "",
+                init: ["Y", "N"]
+            },
+            costItemDialog: false,
+            buttonType: "",
+            dialogName: "",
 
             // 表格配置
             configTable: {
@@ -99,24 +140,28 @@ export default {
                 // 表头
                 tHead: [
                     { label: "费用项编号",  field: "code", width: 200 },
-                    { label: "费用项名称",  field: "name", width: 100 },
-                    { label: "计费方式", field: "computeWayCode", width: 80, columnType: "slot", slotName: "sexName" },
+                    { label: "费用项名称",  field: "name", width: 180 },
+                    { label: "计费方式", field: "computeWayName", width: 180,  },
                     { label: "计费单价", field: "price" },
-                    { label: "附加、固定费用", field: "otherCost" },
-                    { label: "是否启用", field: "startUse", width: 80 },
+                    { label: "附加/固定费用", field: "otherCost" },
+                    { label: "是否启用", field: "startUse", width: 80, columnType: "slot",  slotName: "use" },
                     { label: "创建人", field: "createBy", width: 100 },
                     { label: "操作", columnType: "slot",  slotName: "operation" }
                 ],
                 requestData: {
-                    // url: "getUserList",
-                    // data: {
-                    //     mark: "MQ",
-                    //     userMark: "US",
-                    //     current: 1,
-                    //     size: 10
-                    // }
+                    url: "getCostItemList",
+                    data: {
+                        mark: marks,
+                        current: 1,
+                        size: 10
+                    }
                 }
-            }
+            },
+
+            // 表格数据
+            tableRow: {},
+
+            costItemIds: []
         })
 
 
@@ -126,34 +171,153 @@ export default {
          */
         /*************查询title*********************************** */
         const search = () => {
-
+            let requestData = {
+                url: "getCostItemList",
+                data: {
+                    mark: marks,
+                    name: data.selectOption.search_name,
+                    computeWayCode: data.selectOption.search_computeWay,
+                    startUse: data.selectOption.search_startUse,
+                    current: 1,
+                    size: 10
+                }
+            }
+            getList(requestData)
         }
 
 
         /**  content 内的操作 *************************************** */
 
+        
+        //刷新数据、显示数据
+        const getList = (params) => {
+            refs.costItemTable.refreshData(params);
+        }
+        
+        // 加载费用项计算方式
+        const loadComputeWay = () => {
+            GetComputeWay({id: -1}).then(response => {
+                let responseData = response.data.data;
+                data.computeWays = responseData;
+            })
+        }
+
         // 添加
         const addCostItem = () => {
-
+            data.costItemDialog = true;
+            data.dialogName = "添加费用项";
+            data.buttonType = "addCostItem";
         }
 
         // 修改
-        const editCostItem = () => {
-
+        const editCostItem = (id) => {
+            data.costItemDialog = true;
+            data.dialogName = "修改费用项";
+            data.buttonType = "editCostItem";
+            data.costItemId = id;
+            data.temmpMark = marks;
         }
 
         // 删除
-        const delCostItem = () => {
-
+        const delCostItem = (id) => {
+            data.costItemIds = [id];
+            confirm({
+                context: "确认删除当前所选信息，确认后将无法恢复！！",
+                type: "warning",
+                fn: costItemDelete
+            })
         }
 
         // 批量删除
         const handlerBatchDel = () => {
-
+            if(!data.tableRow.idItem || data.tableRow.idItem == 0){
+                root.$message({
+                    message: "请选择需要删除的用户",
+                    type: "error"
+                })
+                return false;
+            }
+            data.costItemIds = data.tableRow.idItem.map(item => item.costItemId);
+            confirm({
+                context: "确认删除当前所选全部信息，确认后将无法恢复！！",
+                type: "warning",
+                fn: costItemDelete
+            })
         }
+        
+        // 删除
+        const costItemDelete = () => {
+            let requestData = JSON.stringify(data.costItemIds);
+            CostItemDel(requestData).then(response => {
+                let responseData = response.data;
+                refs.costItemTable.refreshData();
+                root.$message({
+                    message:  responseData.message,
+                    type: "success"  
+                })
+            }).catch(error => {
+
+            })
+        }
+        // 启动/关闭变化
+        const useChange = (params) => {
+            if(params.startUse == "Y"){
+                if(params.price == 0 && params.otherCost == 0){
+                    root.$message({
+                        message: "不能开启此费用项，此费用项的单价和附加/固定费用都为空",
+                        type: "error"
+                    })
+                    let requestData = {
+                        url: "getCostItemList",
+                        data:{
+                            mark: marks,
+                            current: 1,
+                            size: 10,
+                        }
+                    }
+                    getList(requestData);
+                    return false;
+                }else{
+                    let requestData = {
+                        costItemId: params.costItemId,
+                        username: data.username,
+                        startUse: "Y"
+                    }
+                    EditCostItem(requestData).then(response => {
+                        root.$message({
+                            message: response.data.message,
+                            type: "success"
+                        })
+                    }).then(error => {
+
+                    })
+                }
+            }else{
+                let requestData = {
+                    costItemId: params.costItemId,
+                    username: data.username,
+                    startUse: "N"
+                }
+                EditCostItem(requestData).then(response => {
+                    root.$message({
+                        message: response.data.message,
+                        type: "success"
+                    })
+                }).then(error => {
+
+                })
+            }
+        } 
+
+        onMounted(() => {
+            // getList();
+            loadComputeWay()
+        })
         return {
-            data,
-            search, addCostItem, editCostItem, delCostItem, handlerBatchDel
+            data, marks,
+            search, addCostItem, editCostItem, delCostItem, handlerBatchDel, getList, useChange,
+            loadComputeWay
+
         }
     }
 }

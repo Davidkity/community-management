@@ -102,7 +102,7 @@ export default {
             dialogName: "",
             userId: 0,
             memberId: 0,
-            isOwner: "",   // 区别业主与普通的标识
+            isOwner: "",   // 区别业主与成员的标识
             relationFlag: true,
             formLabelWidth: "110px",
             configOption: {
@@ -158,7 +158,6 @@ export default {
         }
         // 关闭
         const close = () => {
-            console.log("关闭")
             data.userInfoFlag = false;
             data.buttonType = "";
             data.form.sex = "";
@@ -219,7 +218,6 @@ export default {
         })
         // 加载业主信息
         const loadUserInfo = (id) => {
-            console.log("加载业主");
             let requestData = {
                 mark: data.marks,
                 userMark: "US",

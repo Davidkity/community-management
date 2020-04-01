@@ -29,7 +29,19 @@ export default {
                 { value: "M", label: "男" },
                 { value: "MEMBER", label: "家庭成员" },
                 { value: "TENANT", label: "租客" },
+                { value: "Y", label: "开启" },
+                { value: "N", label: "关闭" },
+                { value: "community", label: "小区" },
+                { value: "build", label: "楼栋" },
+                { value: "unit", label: "单元" },
+                { value: "CASH", label: "现金" },
+                { value: "WECHAT", label: "微信" },
+                { value: "ALIPAY", label: "支付宝" },
+                { value: "E_BANK", label: "网银" },
+                { value: "FIX", label: "固定费用" },
+                { value: "UNFIX", label: "非固定费用" },
                 { value: "OTHER", label: "其他" }
+
             ]
         });
 
@@ -82,6 +94,11 @@ export default {
         const select = () => {
             emit("update:selectVal", data.selectValue)
         }
+
+        // 重置数据
+        const resetData = () => {
+            data.selectValue = ""
+        }
         /**
          * 组件挂载完成时
          */
@@ -91,7 +108,7 @@ export default {
         
         return {
             data,
-            select, initOption
+            select, initOption, resetData
         }
     }
 }

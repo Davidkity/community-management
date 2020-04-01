@@ -7,6 +7,7 @@ import app from "./modules/app";
 import home from "./modules/home";
 import common from "./modules/common";
 import community from "./modules/community";
+import permission from "./modules/permission";
 
 export default new Vuex.Store({
   // state: {},
@@ -16,7 +17,8 @@ export default new Vuex.Store({
     app,
     home,
     common,
-    community
+    community,
+    permission
   }
 
 });

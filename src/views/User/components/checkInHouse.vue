@@ -163,6 +163,7 @@
 
 import { FindHouseTypePre, FindHouseTypeMid, FindHouseTypeSuf, AddHouse, EditHouse} from "@/api/adminApi/home";
 import { UserCheckIn } from "@/api/adminApi/user";
+import { getCommunity  } from "@/utils/app";
 
 import { reactive, onMounted, computed } from '@vue/composition-api';
 //组件
@@ -179,6 +180,7 @@ export default {
     
     setup(props, { root, refs }) {
         // console.log("id:" + root.$route.params.userId);
+        const marks = getCommunity();
         const user_id = root.$route.params.userId;
         const userName = computed(() => root.$store.state.app.username);
         const data = reactive({
@@ -289,7 +291,7 @@ export default {
             console.log("data.house.id: " + data.house.id);
             
             let requestData = {
-                mark: "MQ",
+                mark: marks,
                 checkInMark: "CI",
                 houseId: data.house.id,
                 userId: data.userId,
@@ -299,10 +301,10 @@ export default {
             UserCheckIn(requestData).then(response => {
                   
                 let changeHouseStatusData = {
-                    mark: "MQ",
+                    mark: marks,
                     houseMark: "HO",
                     houseId: data.house.id,
-                    houseStatusCode: "RENT",
+                    houseStatusCode: "SOLD",
                     username: data.username
                 }
                 EditHouse(changeHouseStatusData).then(response => {
@@ -365,7 +367,7 @@ export default {
         })
 
         return {
-            data, 
+            data, marks, 
             // 方法
             last, next, chooseBuild, chooseUnit, chooseHouse, 
             submit, close, checkBuildInfo, checkUnitInfo, checkHouseInfo

@@ -47,6 +47,15 @@ export function UserCheckIn(data){
 }
 
 // 业主入住房屋
+export function GetUserCheckInInfo(data){
+    return service.request({
+        method: "post",
+        url: "/checkIn/getCheckInInfo/",
+        data: data
+    });
+}
+
+// 业主入住房屋
 export function DelCheckIn(data){
     return service.request({
         method: "post",

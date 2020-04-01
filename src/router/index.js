@@ -44,10 +44,20 @@ const routes = [
     },
     component: Layout,
     children:[
-      // 我的小区
+      // 小区主页
       {
         path: "/index",
         name: "Index",
+        meta: {
+          name: "小区主页",
+          icon: "my-plot"
+        },
+        component: () => import("../views/Community/index.vue")
+      },
+      // 我的小区
+      {
+        path: "/myPlot",
+        name: "MyPlot",
         meta: {
           name: "我的小区",
           icon: "my-plot"
@@ -190,11 +200,75 @@ const routes = [
         },
         component: () => import("../views/User/components/checkInHouse.vue")
       }
+      
     ]
   },
 
   /**
-   * 业主管理
+   * 用户管理
+   */
+  {
+    path: "/personal",
+    name: "Personal",
+    meta: {
+      name: "用户管理",
+      icon: "user"
+    },
+    component: Layout,
+    children:[
+      {
+        path: "/customerInfo",
+        name: "CustomerInfo",
+        meta: {
+          name: "用户信息",
+          icon: "user-info"
+        },
+        component: () => import("../views/Customer/customerInfo.vue")
+      }
+      
+    ]
+  },
+
+
+
+  /**
+   * 个人管理
+   */
+  {
+    path: "/personal",
+    name: "Personal",
+    meta: {
+      name: "个人信息",
+      icon: "user"
+    },
+    component: Layout,
+    children:[
+      {
+        path: "/myInfo",
+        name: "MyInfo",
+        meta: {
+          name: "我的信息",
+          icon: "user-info"
+        },
+        component: () => import("../views/Personal/myMoney.vue")
+      },
+      {
+        path: "/changePwd",
+        name: "ChangePwd",
+        meta: {
+          name: "修改密码",
+          icon: "user-info"
+        },
+        component: () => import("../views/Personal/changePwd.vue")
+      }
+    ]
+  },
+
+
+
+
+  /**
+   * 费用管理
    */
   {
     path: "/expense",
@@ -205,7 +279,7 @@ const routes = [
     },
     component: Layout,
     children:[
-      // 业主信息管理页面
+      // 管理页面
       {
         path: "/expenseSet",
         name: "ExpenseSet",
@@ -215,6 +289,70 @@ const routes = [
         },
         component: () => import("../views/Expense/expenseSet.vue")
       },
+      // 房屋费用页面
+      {
+        path: "/houseFree",
+        name: "HouseFree",
+        meta: {
+          name: "房屋费用",
+          icon: "user-info"
+        },
+        component: () => import("../views/Expense/houseFree.vue")
+      },
+      /**
+       * 房屋费用详情 AddHouse
+       */
+      {
+        path: "/houseFreeInfo/:houseId",
+        name: "HouseFreeInfo",
+        hidden: true,
+        meta: {
+          name: "房屋费用项",
+          icon: "house"
+        },
+        component: () => import("../views/Expense/houseFreeInfo.vue")
+      },
+      /**
+       * 房屋费用详情 
+       */
+      {
+        path: "/payment/:costBillId",
+        name: "Payment",
+        hidden: true,
+        meta: {
+          name: "房屋费用缴费",
+          icon: "house"
+        },
+        component: () => import("../views/Expense/payment.vue")
+      },
+      /**
+       * 房屋费用缴费历史 
+       */
+      {
+        path: "/paymentHistory/:costBillId",
+        name: "PaymentHistory",
+        hidden: true,
+        meta: {
+          name: "房屋费用缴费历史",
+          icon: "house"
+        },
+        component: () => import("../views/Expense/paymentHistory.vue")
+      },
+      /**
+       * 缴费清单 
+       */
+      {
+        path: "/paymentInfo",
+        name: "PaymentInfo",
+        meta: {
+          name: "缴费清单",
+          icon: "house"
+        },
+        component: () => import("../views/Expense/paymentInfo.vue")
+      }
+
+
+      
     ]
   },
 

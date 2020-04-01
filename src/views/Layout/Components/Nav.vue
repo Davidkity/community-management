@@ -47,7 +47,7 @@ export default {
         // 获取所有路由
         const routers = reactive(root.$router.options.routes);
         
-        console.log(routers);
+        // console.log(routers);
 
         /******************************************************************************
          * 声明函数
